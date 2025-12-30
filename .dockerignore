@@ -1,0 +1,8 @@
+target
+Cargo.lock
+node_modules
+.gitignore
+Dockerfile
+docker-compose.yml
+README.md
+LICENSE
