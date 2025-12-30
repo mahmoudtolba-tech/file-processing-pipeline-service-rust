@@ -1,19 +1,13 @@
-FROM rust:latest AS build
-
+# Stage 1: Build the application
+FROM rust:latest AS builder
 WORKDIR /app
-
-COPY Cargo.toml .
-
+COPY . .
 RUN cargo build --release
 
-FROM alpine:latest
-
+# Stage 2: Build the Docker image
+FROM postgres:latest
+RUN apt-get update && apt-get install -y libpq-dev
+COPY --from=builder /app/target/release/file_processing_pipeline /app/
 WORKDIR /app
-
-COPY --from=build /app/target/release/file_processing_pipeline .
-
-ENV RUST_LOG=info
-ENV DATABASE_URL=postgres://user:password@localhost/database
-ENV PORT=8080
-
 CMD ["./file_processing_pipeline"]
+EXPOSE 8080
