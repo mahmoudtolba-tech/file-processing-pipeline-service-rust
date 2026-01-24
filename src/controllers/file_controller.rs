@@ -1,30 +1,27 @@
-use super::*;
-use models::{FileModel, FileInput};
-use repositories::file_repository::FileRepository;
-use services::file_service::FileService;
+use actix_web::{web, HttpResponse, Responder};
+use crate::models::File;
+use crate::services::FileService;
+use crate::repositories::FileRepository;
+use sqlx::PgPool;
 
-pub struct FileController {
-    service: FileService,
-}
+pub async fn file_pipeline() -> impl Responder {
+    let pool = PgPool::connect("postgres://user:password@localhost/database")
+        .await
+        .unwrap();
 
-impl FileController {
-    pub fn new(db_url: String) -> Self {
-        let repository = FileRepository::new(db_url);
-        let service = FileService::new(repository);
-        FileController { service }
-    }
+    let repository = FileRepository::new(pool);
+    let service = FileService::new(repository);
 
-    async fn handle_request(&self, req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
-        match (req.method(), req.uri().path()) {
-            (&hyper::Method::POST, "/file") => {
-                self.service.create_file(req).await
-            }
-            (&hyper::Method::GET, "/file") => {
-                self.service.get_all_files(req).await
-            }
-            _ => {
-                Ok(Response::new(Body::from("Not found")))
-            }
-        }
+    let file = File {
+        id: 1,
+        name: "example.txt".to_string(),
+        content: "Hello, world!".to_string(),
+    };
+
+    match service.process_file(file).await {
+        Ok(_) => HttpResponse::Ok().body("File processed successfully"),
+        Err(_) => HttpResponse::InternalServerError().body("Error processing file"),
     }
 }
+
+#### Dockerfile
