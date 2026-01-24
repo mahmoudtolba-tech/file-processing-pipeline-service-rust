@@ -1,9 +1,18 @@
-use super::models;
-use super::repositories;
-use super::schema;
+use crate::models::File;
+use crate::repositories::FileRepository;
 
-pub async fn process_file(file_path: String) -> Result<(), std::io::Error> {
-    let file_repository = repositories::FileRepository::new();
-    let new_file = file_repository.create_file(file_path)?;
-    Ok(())
+pub struct FileService {
+    repository: FileRepository,
 }
+
+impl FileService {
+    pub fn new(repository: FileRepository) -> Self {
+        Self { repository }
+    }
+
+    pub async fn process_file(&self, file: File) -> Result<File, sqlx::Error> {
+        self.repository.save_file(file).await
+    }
+}
+
+#### repositories.rs
