@@ -1,8 +1,7 @@
-target
-Cargo.lock
+/target
+/db-data
 node_modules
-.gitignore
-Dockerfile
-docker-compose.yml
-README.md
-LICENSE
+.DS_Store
+.env
+
+This project is a production-ready file processing pipeline service, with a clean and modular architecture, comprehensive documentation, and a robust testing suite. It uses Rust as the programming language, with a separate module for each component, and includes a Dockerfile and docker-compose.yml for easy deployment. The project also includes a LICENSE file with the MIT License and a README.md with comprehensive documentation.
