@@ -1,7 +1,10 @@
-use super::schema;
+use serde::{Serialize, Deserialize};
 
-#[derive(serde::Serialize, serde::Deserialize, Clone)]
-pub struct File {
-    pub id: i32,
-    pub file_path: String,
+#[derive(Serialize, Deserialize)]
+struct File {
+    id: i32,
+    name: String,
+    content: String,
 }
+
+#### services.rs
