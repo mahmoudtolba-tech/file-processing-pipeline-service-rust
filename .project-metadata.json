@@ -1,24 +1,21 @@
 {
   "language": "Rust",
   "project_idea": "a file processing pipeline service",
-  "generated_at": "2025-12-30 15:47:52",
+  "generated_at": "2026-01-24 20:04:03",
   "files": [
     "Cargo.toml",
     "src/main.rs",
-    "src/controllers.rs",
     "src/models.rs",
-    "src/repositories.rs",
     "src/services.rs",
-    "schema.rs",
-    "migrations/000001_create_files_table.sql",
+    "src/repositories.rs",
+    "src/controllers/file_controller.rs",
     "Dockerfile",
     "docker-compose.yml",
     ".github/workflows/ci.yml",
     ".env.example",
-    "README.md",
     "LICENSE",
-    ".gitignore",
-    ".dockerignore"
+    "README.md",
+    ".gitignore"
   ],
   "purpose": "Demo demonstration and learning resource"
 }
