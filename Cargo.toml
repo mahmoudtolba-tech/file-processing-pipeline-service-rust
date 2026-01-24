@@ -1,19 +1,15 @@
 [package]
-name = "file_processing_pipeline"
+name = "file_pipeline"
 version = "0.1.0"
 authors = ["Mahmoud Tolba"]
 edition = "2021"
 
 [dependencies]
-actix-web = "4.2.2"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.82"
-env_logger = "0.9.2"
-log = "0.4.14"
+actix-web = "4.2.1"
+env_logger = "0.10.0"
 sqlx = { version = "0.6.2", features = [ "postgres" ] }
-diesel = { version = "1.4.8", features = [ "postgres" ] }
+serde = { version = "1.0.139", features = [ "derive" ] }
 dotenv = "0.15.0"
-chrono = "0.4.19"
-tokio = { version = "1", features = ["full"] }
-redis = "0.20.0"
-reqwest = "0.11.10"
+log = "0.4.16"
+
+#### main.rs
