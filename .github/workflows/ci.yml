@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rust@v1
+
+      - name: Build and test
+        run: |
+          cargo build --release
+          cargo test
+
+      - name: Docker build
+        run: |
+          docker build -t file_pipeline .
+
+      - name: Docker push
+        run: |
+          docker tag file_pipeline:latest mahmoudtolba/file_pipeline:latest
+          docker push mahmoudtolba/file_pipeline:latest
+
+#### .env.example
