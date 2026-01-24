@@ -1,26 +1,24 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use env_logger::Env;
 use dotenv::dotenv;
-use env_logger::init;
-use std::env;
 
 mod controllers;
 mod models;
-mod repositories;
 mod services;
+mod repositories;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
-    init();
-    let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
-    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
 
     HttpServer::new(|| {
         App::new()
-            .service(web::resource("/process_file").route(web::post().to(controllers::process_file)))
-            .service(web::resource("/health_check").route(web::get().to(controllers::health_check)))
+            .service(controllers::file_controller::file_pipeline)
     })
-    .bind((host, port.parse().unwrap()))?
+    .bind("127.0.0.1:8080")?
     .run()
     .await
 }
+
+#### models.rs
