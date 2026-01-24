@@ -1,13 +1,17 @@
-# Stage 1: Build the application
-FROM rust:latest AS builder
+FROM rust:1.63-slim AS build
 WORKDIR /app
 COPY . .
 RUN cargo build --release
 
-# Stage 2: Build the Docker image
-FROM postgres:latest
-RUN apt-get update && apt-get install -y libpq-dev
-COPY --from=builder /app/target/release/file_processing_pipeline /app/
+FROM postgres:12
+ENV PG_USER=user
+ENV PG_PASSWORD=password
+ENV PG_DATABASE=database
+
+FROM alpine:latest
 WORKDIR /app
-CMD ["./file_processing_pipeline"]
+COPY --from=build /app/target/release/file_pipeline .
 EXPOSE 8080
+CMD ["./file_pipeline"]
+
+#### docker-compose.yml
