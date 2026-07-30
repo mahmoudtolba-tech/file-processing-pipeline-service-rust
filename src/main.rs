@@ -1,24 +1,49 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-use env_logger::Env;
-use dotenv::dotenv;
+use actix_web::{App, HttpServer, web};
+use sqlx::postgres::PgPoolOptions;
+use std::env;
+use tracing::info;
+use tracing_subscriber::{fmt, EnvFilter};
 
-mod controllers;
+mod config;
+mod db;
+mod errors;
+mod handlers;
 mod models;
-mod services;
 mod repositories;
+mod services;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    dotenv().ok();
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
+    // Initialize logger
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(EnvFilter::from_default_env())
+        .init();
 
-    HttpServer::new(|| {
+    // Load .env
+    dotenvy::dotenv().ok();
+
+    // Read configuration
+    let cfg = config::Config::from_env().expect("Failed to load configuration");
+
+    // Create DB pool
+    let pool = PgPoolOptions::new()
+        .max_connections(cfg.db.max_connections)
+        .connect(&cfg.db.url)
+        .await
+        .expect("Failed to create DB pool");
+
+    // Run migrations
+    db::run_migrations(&pool).await.expect("Migrations failed");
+
+    // Build server
+    info!("Starting server at http://{}", cfg.server.bind_addr);
+    HttpServer::new(move || {
         App::new()
-            .service(controllers::file_controller::file_pipeline)
+            .app_data(web::Data::new(pool.clone()))
+            .configure(handlers::router)
     })
-    .bind("127.0.0.1:8080")?
+    .bind(cfg.server.bind_addr)?
     .run()
     .await
 }
-
-#### models.rs
