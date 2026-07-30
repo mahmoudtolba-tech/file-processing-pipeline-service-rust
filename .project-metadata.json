@@ -1,21 +1,27 @@
 {
   "language": "Rust",
   "project_idea": "a file processing pipeline service",
-  "generated_at": "2026-01-24 20:04:03",
+  "generated_at": "2026-07-30T21:58:02.436204Z",
+  "generated_by": "tolbaTech GitHub Strike Service",
+  "model": "gpt-oss-120b",
   "files": [
-    "Cargo.toml",
-    "src/main.rs",
-    "src/models.rs",
-    "src/services.rs",
-    "src/repositories.rs",
-    "src/controllers/file_controller.rs",
-    "Dockerfile",
-    "docker-compose.yml",
-    ".github/workflows/ci.yml",
     ".env.example",
+    ".github/workflows/ci.yml",
+    ".gitignore",
+    "Cargo.toml",
+    "Dockerfile",
     "LICENSE",
     "README.md",
-    ".gitignore"
-  ],
-  "purpose": "Demo demonstration and learning resource"
+    "docker-compose.yml",
+    "migrations/202401010001_create_files_table.sql",
+    "migrations/202401010002_seed_data.sql",
+    "src/config.rs",
+    "src/db.rs",
+    "src/errors.rs",
+    "src/handlers.rs",
+    "src/main.rs",
+    "src/models.rs",
+    "src/repositories.rs",
+    "src/services.rs"
+  ]
 }
