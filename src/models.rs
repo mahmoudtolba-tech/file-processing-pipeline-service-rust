@@ -1,10 +1,12 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
+use chrono::{Utc, DateTime};
 
-#[derive(Serialize, Deserialize)]
-struct File {
-    id: i32,
-    name: String,
-    content: String,
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
+pub struct FileRecord {
+    pub id: Uuid,
+    pub filename: String,
+    pub size_bytes: i64,
+    pub uploaded_at: DateTime<Utc>,
+    pub processed: bool,
 }
-
-#### services.rs
