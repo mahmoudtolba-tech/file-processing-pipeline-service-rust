@@ -1,17 +1,17 @@
-FROM rust:1.63-slim AS build
+# ---------- Build stage ----------
+FROM rust:1.78 as builder
 WORKDIR /app
-COPY . .
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+COPY migrations ./migrations
+RUN apt-get update && apt-get install -y libpq-dev && rm -rf /var/lib/apt/lists/*
 RUN cargo build --release
 
-FROM postgres:12
-ENV PG_USER=user
-ENV PG_PASSWORD=password
-ENV PG_DATABASE=database
-
-FROM alpine:latest
-WORKDIR /app
-COPY --from=build /app/target/release/file_pipeline .
+# ---------- Runtime stage ----------
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y libpq5 ca-certificates && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /app/target/release/file_pipeline_service /usr/local/bin/file_pipeline_service
+COPY --from=builder /app/migrations ./migrations
 EXPOSE 8080
-CMD ["./file_pipeline"]
-
-#### docker-compose.yml
+ENV RUST_LOG=info
+CMD ["file_pipeline_service"]
