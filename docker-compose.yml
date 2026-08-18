@@ -1,25 +1,28 @@
 version: "3.9"
 services:
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: file_pipeline
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      POSTGRES_USER: file_user
+      POSTGRES_PASSWORD: file_pass
+      POSTGRES_DB: file_db
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   app:
     build: .
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://user:password@db:5432/file_pipeline
-      SERVER_BIND_ADDR: 0.0.0.0:8080
+      - DATABASE_URL=postgres://file_user:file_pass@db:5432/file_db
+      - HOST=0.0.0.0
+      - PORT=8080
     ports:
       - "8080:8080"
+    command: ["./file_pipeline_service"]
+    restart: unless-stopped
 
 volumes:
   pgdata:
