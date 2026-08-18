@@ -1,0 +1,11 @@
+-- Up
+CREATE TABLE IF NOT EXISTS files (
+    id SERIAL PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    location TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    processed BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Down
+DROP TABLE IF EXISTS files;
