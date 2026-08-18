@@ -1,39 +1,23 @@
-use crate::errors::ConfigError;
-use std::env;
+use config::{ConfigError, Config as Cfg, Environment, File};
+use serde::Deserialize;
 
-#[derive(Debug, Clone)]
+/// Application configuration loaded from environment variables.
+#[derive(Debug, Deserialize, Clone)]
 pub struct Config {
-    pub server: ServerConfig,
-    pub db: DbConfig,
-}
-
-#[derive(Debug, Clone)]
-pub struct ServerConfig {
-    pub bind_addr: String,
-}
-
-#[derive(Debug, Clone)]
-pub struct DbConfig {
-    pub url: String,
-    pub max_connections: u32,
+    pub host: String,
+    pub port: u16,
+    pub database_url: String,
+    pub log_level: String,
 }
 
 impl Config {
+    /// Load configuration from `.env`, `config.toml` (optional) and environment variables.
     pub fn from_env() -> Result<Self, ConfigError> {
-        let server = ServerConfig {
-            bind_addr: env::var("SERVER_BIND_ADDR")
-                .unwrap_or_else(|_| "0.0.0.0:8080".to_string()),
-        };
-
-        let db = DbConfig {
-            url: env::var("DATABASE_URL")
-                .map_err(|_| ConfigError::MissingEnvVar("DATABASE_URL".into()))?,
-            max_connections: env::var("DB_MAX_CONNECTIONS")
-                .ok()
-                .and_then(|v| v.parse().ok())
-                .unwrap_or(5),
-        };
-
-        Ok(Config { server, db })
+        let mut cfg = Cfg::builder()
+            .add_source(File::with_name("config").required(false))
+            .add_source(File::with_name(".env").required(false))
+            .add_source(Environment::default().separator("__"))
+            .build()?;
+        cfg.try_deserialize()
     }
 }
